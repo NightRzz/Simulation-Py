@@ -14,55 +14,55 @@ class Organizm:
         self.zolwodparlatak = False
         self.wiek = 0
 
-    def set_cooldown(self, cooldown):
+    def setCooldown(self, cooldown):
         self.cooldown = cooldown
 
-    def set_licznik(self, licznik):
+    def setLicznik(self, licznik):
         self.licznik = licznik
 
-    def set_wlacz(self, wlacz):
+    def setWlacz(self, wlacz):
         self.wlacz = wlacz
 
-    def set_x(self, x):
+    def setX(self, x):
         self.x = x
 
-    def get_x(self):
+    def getX(self):
         return self.x
 
-    def set_y(self, y):
+    def setY(self, y):
         self.y = y
 
-    def get_y(self):
+    def getY(self):
         return self.y
 
-    def get_id(self):
+    def getID(self):
         return self.id
 
-    def get_imie(self):
+    def getImie(self):
         return self.imie
 
-    def set_imie(self, imie):
+    def setImie(self, imie):
         self.imie = imie
 
-    def get_sila(self):
+    def getSila(self):
         return self.sila
 
-    def set_sila(self, sila):
+    def setSila(self, sila):
         self.sila = sila
 
-    def get_inicjatywa(self):
+    def getInicjatywa(self):
         return self.inicjatywa
 
-    def set_inicjatywa(self, inicjatywa):
+    def setInicjatywa(self, inicjatywa):
         self.inicjatywa = inicjatywa
 
-    def get_wiek(self):
+    def getWiek(self):
         return self.wiek
 
-    def set_id(self, id):
+    def setId(self, id):
         self.id = id
 
-    def set_wiek(self, wiek):
+    def setWiek(self, wiek):
         self.wiek = wiek
 
     def akcja(self, plansza, gra, szerokosc, wysokosc, keycode):
