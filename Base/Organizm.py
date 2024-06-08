@@ -1,8 +1,8 @@
 class Organizm:
-    def __init__(self, x, y, id, imie, sila, inicjatywa):
+    def __init__(self, x, y, orgid, imie, sila, inicjatywa):
         self.x = x
         self.y = y
-        self.id = id
+        self.id = orgid
         self.imie = imie
         self.sila = sila
         self.inicjatywa = inicjatywa
