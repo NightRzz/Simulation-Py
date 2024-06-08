@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Czlowiek extends Zwierze {
     public Czlowiek() {
-        setSila(5);
+        setSila(2);
         setInicjatywa(4);
         setID('C');
         setWiek(0);

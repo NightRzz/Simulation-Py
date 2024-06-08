@@ -1,5 +1,6 @@
+import csv
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import random
 import Zwierzeta.Antylopa as Antylopa
 import Zwierzeta.Owca as Owca
@@ -36,9 +37,15 @@ class Swiat:
             'C': '#F2E5CB'  # Czlowiek
         }
         self.root = tk.Tk()
-        self.root.title("Yuriy Dyedyk")
+        self.root.title("Yuriy Dyedyk 201316")
         self.grid = tk.Frame(self.root)
         self.grid.pack()
+        self.log_area = tk.Text(self.root, width=50)
+        self.log_area.pack()
+
+    def print_log(self, message):
+        # Use this method to print logs to the Text widget
+        self.log_area.insert(tk.END, message + '\n')
 
     def initialize_grid(self):
         for widget in self.grid.winfo_children():
@@ -82,32 +89,34 @@ class Swiat:
         button.pack()
 
     def update_grid(self):
+
         self.initialize_grid()
+
 
     def dodaj_organizm(self, x, y, idOrg):
         new_organism = None
         if idOrg == 'A':
-            new_organism = Antylopa.Antylopa()
+            new_organism = Antylopa.Antylopa(self.print_log)
         elif idOrg == 'O':
-            new_organism = Owca.Owca()
+            new_organism = Owca.Owca(self.print_log)
         elif idOrg == 'W':
-            new_organism = Wilk.Wilk()
+            new_organism = Wilk.Wilk(self.print_log)
         elif idOrg == 'L':
-            new_organism = Lis.Lis()
+            new_organism = Lis.Lis(self.print_log)
         elif idOrg == 'Z':
-            new_organism = Zolw.Zolw()
+            new_organism = Zolw.Zolw(self.print_log)
         elif idOrg == 'T':
-            new_organism = Trawa.Trawa()
+            new_organism = Trawa.Trawa(self.print_log)
         elif idOrg == 'M':
-            new_organism = Mlecz.Mlecz()
+            new_organism = Mlecz.Mlecz(self.print_log)
         elif idOrg == 'J':
-            new_organism = WilczeJagody.WilczeJagody()
+            new_organism = WilczeJagody.WilczeJagody(self.print_log)
         elif idOrg == 'G':
-            new_organism = Guarana.Guarana()
+            new_organism = Guarana.Guarana(self.print_log)
         elif idOrg == 'B':
-            new_organism = Barszcz.Barszcz()
+            new_organism = Barszcz.Barszcz(self.print_log)
         elif idOrg == 'C':
-            new_organism = Czlowiek.Czlowiek()
+            new_organism = Czlowiek.Czlowiek(self.print_log)
         if new_organism is not None:
             new_organism.setX(x)
             new_organism.setY(y)
@@ -146,6 +155,7 @@ class Swiat:
         self.Gra = [organism for row in self.plansza for organism in row if organism is not None]
 
     def wykonajTure(self, keycode=None):
+        self.log_area.delete('1.0', tk.END)
         self.zakonczTure()
 
         rand = random.Random()
@@ -202,20 +212,74 @@ class Swiat:
                     if org is not None:
                         file.write(f"{org.getX()},{org.getY()},{org.getSila()},{org.getID()},{org.getWiek()}\n")
 
-            print("Zapisano stan gry do pliku!")
+            messagebox.showinfo("Zapis", "Zapisano stan gry do pliku!")
         except IOError as e:
-            print(f"Error: {str(e)}")
+            messagebox.showinfo("Zapis", "Error: {str(e)}")
+
+    def wczytaj(self, file_path):
+        try:
+            with open(file_path, 'r') as file:
+                reader = csv.reader(file)
+                line = next(reader)
+                self.wysokosc = int(line[0])
+                self.szerokosc = int(line[1])
+                licznik = int(line[2])
+                cooldown = int(line[3])
+                wlacz = bool(line[4])
+                self.Gra.clear()
+                self.plansza = [[None for _ in range(self.szerokosc)] for _ in range(self.wysokosc)]
+                for line in reader:
+                    x = int(line[0])
+                    y = int(line[1])
+                    sila = int(line[2])
+                    sign = line[3]
+                    wiek = int(line[4])
+                    if sign == 'A':
+                        org = Antylopa.Antylopa(self.print_log, x, y, sila, wiek)
+                    elif sign == 'B':
+                        org = Barszcz.Barszcz(self.print_log, x, y, sila, wiek)
+                    elif sign == 'C':
+                        org = Czlowiek.Czlowiek(self.print_log, x, y, sila, wiek, cooldown, licznik, wlacz)
+                    elif sign == 'G':
+                        org = Guarana.Guarana(self.print_log, x, y, sila, wiek)
+                    elif sign == 'L':
+                        org = Lis.Lis(self.print_log, x, y, sila, wiek)
+                    elif sign == 'M':
+                        org = Mlecz.Mlecz(self.print_log, x, y, sila, wiek)
+                    elif sign == 'O':
+                        org = Owca.Owca(self.print_log, x, y, sila, wiek)
+                    elif sign == 'T':
+                        org = Trawa.Trawa(self.print_log, x, y, sila, wiek)
+                    elif sign == 'J':
+                        org = WilczeJagody.WilczeJagody(self.print_log, x, y, sila, wiek)
+                    elif sign == 'W':
+                        org = Wilk.Wilk(self.print_log, x, y, sila, wiek)
+                    elif sign == 'Z':
+                        org = Zolw.Zolw(self.print_log, x, y, sila, wiek)
+                    else:
+                        org = None
+                    self.plansza[x][y] = org
+                    self.Gra.append(org)
+            messagebox.showinfo("Information", "Zapis gry zostal wczytany!")
+            self.log_area.delete('1.0', tk.END)
+            self.update_grid()
+        except (IOError, ValueError) as e:
+            messagebox.showerror("Error", "Error: " + str(e))
 
     def start(self):
         self.generuj()
         self.initialize_grid()
         wykonaj_ture_button = tk.Button(self.root, text="Wykonaj Ture", command=self.wykonajTure)
         wykonaj_ture_button.pack()
-        self.root.bind('<Left>', lambda event: self.wykonajTure(37))  # ASCII value for left arrow key is 37
-        self.root.bind('<Up>', lambda event: self.wykonajTure(38))  # ASCII value for up arrow key is 38
-        self.root.bind('<Right>', lambda event: self.wykonajTure(39))  # ASCII value for right arrow key is 39
-        self.root.bind('<Down>', lambda event: self.wykonajTure(40))  # ASCII value for down arrow key is 40
-
+        self.root.bind('<Left>', lambda event: self.wykonajTure(37))
+        self.root.bind('<Up>', lambda event: self.wykonajTure(38))
+        self.root.bind('<Right>', lambda event: self.wykonajTure(39))
+        self.root.bind('<Down>', lambda event: self.wykonajTure(40))
+        self.root.bind('1', lambda event: self.wykonajTure(49))
+        save_button = tk.Button(self.root, text="Zapisz", command=self.save_world_to_file)
+        save_button.pack()
+        load_button = tk.Button(self.root, text="Wczytaj", command=lambda: self.wczytaj('save.txt'))
+        load_button.pack()
         self.root.mainloop()
 
     def rozsianie(self, kierunek, org):
@@ -224,51 +288,53 @@ class Swiat:
                 new_plant = self.dodaj_organizm(org.getX(), org.getY() - 1, org.getID())
                 self.plansza[org.getX()][org.getY() - 1] = new_plant
                 self.Gra.append(new_plant)
-                print(f"{org.getImie()} rozsial sie na pole {org.getX()} {org.getY()}")
+                self.print_log(f"{org.getImie()} rozsial sie na pole {org.getX()} {org.getY()}")
         elif kierunek == 1:
             if org.getY() < self.szerokosc - 1 and self.plansza[org.getX()][org.getY() + 1] is None:
                 new_plant = self.dodaj_organizm(org.getX(), org.getY() + 1, org.getID())
                 self.plansza[org.getX()][org.getY() + 1] = new_plant
                 self.Gra.append(new_plant)
-                print(f"{org.getImie()} rozsial sie na pole {org.getX()} {org.getY()}")
+                self.print_log(f"{org.getImie()} rozsial sie na pole {org.getX()} {org.getY()}")
         elif kierunek == 2:
             if org.getX() < self.wysokosc - 1 and self.plansza[org.getX() + 1][org.getY()] is None:
                 new_plant = self.dodaj_organizm(org.getX() + 1, org.getY(), org.getID())
                 self.plansza[org.getX() + 1][org.getY()] = new_plant
                 self.Gra.append(new_plant)
-                print(f"{org.getImie()} rozsial sie na pole {org.getX()} {org.getY()}")
+                self.print_log(f"{org.getImie()} rozsial sie na pole {org.getX()} {org.getY()}")
         elif kierunek == 3:
             if org.getX() > 0 and self.plansza[org.getX() - 1][org.getY()] is None:
                 new_plant = self.dodaj_organizm(org.getX() - 1, org.getY(), org.getID())
                 self.plansza[org.getX() - 1][org.getY()] = new_plant
                 self.Gra.append(new_plant)
-                print(f"{org.getImie()} rozsial sie na pole {org.getX()} {org.getY()}")
+                self.print_log(f"{org.getImie()} rozsial sie na pole {org.getX()} {org.getY()}")
 
     def rozmnoz(self, org, rand, i, x1, y1):
         org.rozmnoz = False
         org.zolwodparlatak = False
         obronca = self.plansza[org.getX()][org.getY()]
         atakujacy = org.getID()
+
+        # Check if the two organisms are of the same type
+        if isinstance(org, type(obronca)):
+            # Find a nearby empty location
+            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                new_x, new_y = x1 + dx, y1 + dy
+                if (0 <= new_x < self.wysokosc and 0 <= new_y < self.szerokosc and
+                        self.plansza[new_x][new_y] is None):
+                    # Create a new organism of the same type and place it in the empty location
+                    new_organism = self.dodaj_organizm(new_x, new_y, org.getID())
+                    self.plansza[new_x][new_y] = new_organism
+                    self.Gra.append(new_organism)
+                    self.print_log(f"{org.getImie()} rozmnozyl sie na pole {new_x} {new_y}")
+                    return
+            org.setX(x1)
+            org.setY(y1)
+            return
+
+        # If the two organisms are not of the same type, proceed with the existing collision logic
         self.plansza[org.getX()][org.getY()] = org.kolizja(org, self.plansza[org.getX()][org.getY()], self.plansza,
                                                            self.szerokosc, self.wysokosc)
-        if org.rozmnoz:
-            kierunek = rand.randint(0, 3)
-            new_x, new_y = x1, y1
-            if kierunek == 0 and org.getY() > 0:  # move up
-                new_y -= 1
-            elif kierunek == 1 and org.getY() < self.szerokosc - 1:  # move down
-                new_y += 1
-            elif kierunek == 2 and org.getX() > 0:  # move left
-                new_x -= 1
-            elif kierunek == 3 and org.getX() < self.wysokosc - 1:  # move right
-                new_x += 1
-
-            if self.plansza[new_x][new_y] is None:
-                new_organism = self.dodaj_organizm(new_x, new_y, org.getID())
-                self.plansza[new_x][new_y] = new_organism
-                self.Gra.append(new_organism)
-                print(f"{org.getImie()} rozmnozyl sie na pole {new_x} {new_y}")
-        elif self.plansza[org.getX()][org.getY()] is not None and atakujacy == self.plansza[org.getX()][
+        if self.plansza[org.getX()][org.getY()] is not None and atakujacy == self.plansza[org.getX()][
             org.getY()].getID():
             for j in range(len(self.Gra)):
                 if self.Gra[j] is not None and obronca == self.Gra[j]:
