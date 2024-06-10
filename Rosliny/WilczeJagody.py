@@ -3,7 +3,7 @@ from Base.Roslina import Roslina
 
 
 class WilczeJagody(Roslina):
-    def __init__(self,print_log, x=0, y=0, sila=99, wiek=0):
+    def __init__(self, print_log, x=0, y=0, sila=99, wiek=0):
         super().__init__(x, y, 'J', "Wilcze Jagody", sila, 0)
         self.wiek = wiek
         self.rozsiane = False
@@ -14,5 +14,5 @@ class WilczeJagody(Roslina):
         self.rozsiane = rozsiew == 0
 
     def kolizja(self, off, def_, plansza, szerokosc, wysokosc):
-        self.print_log(f"{off.imie} zjada {def_.imie} i ginie")
+        self.print_log(f"{off.getImie()} zjada {def_.getImie()} i ginie")
         return def_

@@ -3,7 +3,7 @@ from Base.Zwierze import Zwierze
 
 
 class Zolw(Zwierze):
-    def __init__(self,print_log, x=0, y=0, sila=2, wiek=0):
+    def __init__(self, print_log, x=0, y=0, sila=2, wiek=0):
         super().__init__(x, y, 'Z', "Zolw", sila, 1)
         self.wiek = wiek
         self.zolwodparlatak = False
@@ -13,40 +13,40 @@ class Zolw(Zwierze):
         ruch = random.randint(0, 2)
         if ruch == 0:
             kierunek = random.randint(0, 3)
-            if kierunek == 0 and self.y > 0:
-                self.y -= 1
-            elif kierunek == 1 and self.y < szerokosc - 1:
-                self.y += 1
-            elif kierunek == 2 and self.x < wysokosc - 1:
-                self.x += 1
-            elif kierunek == 3 and self.x > 0:
-                self.x -= 1
+            if kierunek == 0 and self._y > 0:
+                self._y -= 1
+            elif kierunek == 1 and self._y < szerokosc - 1:
+                self._y += 1
+            elif kierunek == 2 and self._x < wysokosc - 1:
+                self._x += 1
+            elif kierunek == 3 and self._x > 0:
+                self._x -= 1
 
     def kolizja(self, off, def_, plansza, szerokosc, wysokosc):
         if def_.id == off.id:
             def_.rozmnoz = True
             return def_
         elif def_.id == self.id:  # broni
-            if off.sila < 5:  # odparcie ataku
-                self.print_log(f"{def_.imie} odpiera atak {off.imie}")
+            if off.getSila() < 5:  # odparcie ataku
+                self.print_log(f"{def_.getImie()} odpiera atak {off.getImie()}")
                 self.zolwodparlatak = True
                 return def_
             else:
-                if def_.sila > off.sila:
-                    self.print_log(f"{def_.imie} wygyrwa z {off.imie}")
+                if def_.getSila() > off.getSila():
+                    self.print_log(f"{def_.getImie()} wygyrwa z {off.getImie()}")
                     return def_
                 else:
-                    self.print_log(f"{def_.imie} przegrywa z {off.imie}")
+                    self.print_log(f"{def_.getImie()} przegrywa z {off.getImie()}")
                     return off
         elif off.id == self.id:  # atakuje
-            if off.sila > def_.sila:
+            if off.getSila() > def_.getSila():
                 if off == def_.kolizja(off, def_, plansza, szerokosc, wysokosc):
-                    self.print_log(f"{off.imie} wygyrwa z {def_.imie}")
+                    self.print_log(f"{off.getImie()} wygyrwa z {def_.getImie()}")
                     return off
-            elif off.sila == def_.sila:
-                self.print_log(f"{off.imie} wygrywa z {def_.imie}")
+            elif off.getSila() == def_.getSila():
+                self.print_log(f"{off.getImie()} wygrywa z {def_.getImie()}")
                 return off
             else:
-                self.print_log(f"{off.imie} przegrywa z {def_.imie}")
+                self.print_log(f"{off.getImie()} przegrywa z {def_.getImie()}")
                 return def_
         return None

@@ -4,7 +4,7 @@ from Base.Zwierze import Zwierze
 
 
 class Barszcz(Roslina):
-    def __init__(self,print_log, x=0, y=0, sila=10, wiek=0):
+    def __init__(self, print_log, x=0, y=0, sila=10, wiek=0):
         super().__init__(x, y, 'B', "Barszcz Sosnowskiego", sila, 0)
         self.wiek = wiek
         self.rozsiane = False
@@ -16,16 +16,18 @@ class Barszcz(Roslina):
         self.rozsiane = rozsiew == 0
 
     def kolizja(self, off, def_, plansza, szerokosc, wysokosc):
+        if off.id == 'K':
+            return off
         return def_
 
     def eksterminacja(self, plansza, gra):
         for i in range(len(gra)):
             org = gra[i]
-            if (isinstance(org, Zwierze) or org is not None and org.id == 'C') and \
-                    ((org.x == self.x - 1 and org.y == self.y) or
-                     (org.x == self.x + 1 and org.y == self.y) or
-                     (org.y == self.y - 1 and org.x == self.x) or
-                     (org.y == self.y + 1 and org.x == self.x)):
-                self.print_log(f"{org.imie} umiera przez Barszcz Sosnowskiego")
-                plansza[org.x][org.y] = None
+            if (isinstance(org, Zwierze) and org.id != 'K') and \
+                    ((org.getX() == self._x - 1 and org.getY() == self._y) or
+                     (org.getX() == self._x + 1 and org.getY() == self._y) or
+                     (org.getY() == self._y - 1 and org.getX() == self._x) or
+                     (org.getY() == self._y + 1 and org.getX() == self._x)):
+                self.print_log(f"{org.getImie()} umiera przez Barszcz Sosnowskiego")
+                plansza[org.getX()][org.getY()] = None
                 gra[i] = None
